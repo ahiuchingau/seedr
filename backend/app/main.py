@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .api import api_router
 from .core.config import get_settings
-from .dependencies.redis import lifespan
+from .dependencies.sqlite import lifespan
 
 
 def create_app() -> FastAPI:

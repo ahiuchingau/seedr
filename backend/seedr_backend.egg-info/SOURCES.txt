@@ -8,7 +8,11 @@ app/api/v1/routes.py
 app/core/__init__.py
 app/core/config.py
 app/dependencies/__init__.py
-app/dependencies/redis.py
+app/dependencies/sqlite.py
+app/schemas/__init__.py
+app/schemas/garden.py
+app/schemas/seed.py
+app/schemas/task.py
 app/services/__init__.py
 seedr_backend.egg-info/PKG-INFO
 seedr_backend.egg-info/SOURCES.txt

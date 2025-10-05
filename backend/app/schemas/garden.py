@@ -14,13 +14,11 @@ class PodStatus(str, Enum):
 
 class Garden(BaseModel):
     """Garden/hydroponic system configuration"""
+
     id: str
     name: str
     description: Optional[str] = None
-    total_pods: int = Field(
-        gt=0,
-        description="Total number of growing pods in the garden"
-    )
+    total_pods: int = Field(gt=0, description="Total number of growing pods in the garden")
 
     # System configuration
     system_type: Optional[str] = None  # e.g., "NFT", "DWC", "Ebb & Flow"
@@ -40,19 +38,17 @@ class Garden(BaseModel):
                 "description": "Main hydroponic garden in the kitchen",
                 "total_pods": 12,
                 "system_type": "NFT",
-                "location": "Kitchen"
+                "location": "Kitchen",
             }
         }
 
 
 class Pod(BaseModel):
     """Individual growing pod in a garden"""
+
     id: str
     garden_id: str
-    pod_number: int = Field(
-        ge=1,
-        description="Pod position number in the garden"
-    )
+    pod_number: int = Field(ge=1, description="Pod position number in the garden")
     status: PodStatus = PodStatus.EMPTY
 
     # Seed assignment
@@ -74,13 +70,14 @@ class Pod(BaseModel):
                 "pod_number": 1,
                 "status": "planted",
                 "seed_batch_id": "batch_001",
-                "planted_date": "2025-10-01T10:00:00Z"
+                "planted_date": "2025-10-01T10:00:00Z",
             }
         }
 
 
 class GardenEnvironmentLog(BaseModel):
     """Environmental measurements for the entire garden system"""
+
     id: str
     garden_id: str
     timestamp: datetime = Field(default_factory=lambda: datetime.now(datetime.UTC))
@@ -109,15 +106,17 @@ class GardenEnvironmentLog(BaseModel):
                 "ec_level": 1.8,
                 "water_temp_c": 22.5,
                 "air_temp_c": 24.0,
-                "humidity_percent": 65.0
+                "humidity_percent": 65.0,
             }
         }
 
 
 # Request/Response schemas for API endpoints
 
+
 class GardenCreate(BaseModel):
     """Schema for creating a new garden"""
+
     name: str
     description: Optional[str] = None
     total_pods: int = Field(gt=0)
@@ -128,6 +127,7 @@ class GardenCreate(BaseModel):
 
 class GardenUpdate(BaseModel):
     """Schema for updating a garden"""
+
     name: Optional[str] = None
     description: Optional[str] = None
     system_type: Optional[str] = None
@@ -138,6 +138,7 @@ class GardenUpdate(BaseModel):
 
 class PodCreate(BaseModel):
     """Schema for creating a new pod"""
+
     garden_id: str
     pod_number: int = Field(ge=1)
     notes: Optional[str] = None
@@ -145,6 +146,7 @@ class PodCreate(BaseModel):
 
 class PodUpdate(BaseModel):
     """Schema for updating a pod"""
+
     status: Optional[PodStatus] = None
     seed_batch_id: Optional[str] = None
     planted_date: Optional[datetime] = None
@@ -153,6 +155,7 @@ class PodUpdate(BaseModel):
 
 class GardenEnvironmentLogCreate(BaseModel):
     """Schema for creating an environment log entry"""
+
     ph_level: Optional[float] = None
     ec_level: Optional[float] = None
     water_temp_c: Optional[float] = None

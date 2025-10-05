@@ -24,6 +24,7 @@ class GrowthStage(str, Enum):
 
 class Seed(BaseModel):
     """Seed information - the variety and its characteristics"""
+
     id: str
     name: str  # e.g., "Cherry Tomato", "Basil"
     seed_type: SeedType
@@ -31,13 +32,9 @@ class Seed(BaseModel):
     supplier: Optional[str] = None
 
     # Growth characteristics
-    germination_days: int = Field(
-        default=7,
-        description="Expected days for germination"
-    )
+    germination_days: int = Field(default=7, description="Expected days for germination")
     days_to_harvest: int = Field(
-        default=60,
-        description="Expected days from germination to harvest"
+        default=60, description="Expected days from germination to harvest"
     )
 
     # Optional growing information
@@ -64,13 +61,14 @@ class Seed(BaseModel):
                 "germination_days": 7,
                 "days_to_harvest": 65,
                 "optimal_ph_min": 5.5,
-                "optimal_ph_max": 6.5
+                "optimal_ph_max": 6.5,
             }
         }
 
 
 class SeedBatch(BaseModel):
     """A batch of seeds planted - links seed variety to actual planting"""
+
     id: str
     seed_id: str  # Reference to Seed
     batch_number: Optional[str] = None
@@ -97,13 +95,14 @@ class SeedBatch(BaseModel):
                 "seed_id": "seed_tomato_001",
                 "batch_number": "BATCH-2025-001",
                 "germination_start_date": "2025-10-01",
-                "current_stage": "germination"
+                "current_stage": "germination",
             }
         }
 
 
 class GrowthLogEntry(BaseModel):
     """Individual growth observation or measurement for a seed batch"""
+
     id: str
     seed_batch_id: str
     timestamp: datetime = Field(default_factory=datetime.utcnow)
@@ -125,15 +124,17 @@ class GrowthLogEntry(BaseModel):
                 "timestamp": "2025-10-05T10:30:00Z",
                 "observation": "First true leaves emerging",
                 "height_cm": 5.2,
-                "leaf_count": 4
+                "leaf_count": 4,
             }
         }
 
 
 # Request/Response schemas for API endpoints
 
+
 class SeedCreate(BaseModel):
     """Schema for creating a new seed variety"""
+
     name: str
     seed_type: SeedType
     variety: Optional[str] = None
@@ -151,6 +152,7 @@ class SeedCreate(BaseModel):
 
 class SeedUpdate(BaseModel):
     """Schema for updating a seed variety"""
+
     name: Optional[str] = None
     variety: Optional[str] = None
     supplier: Optional[str] = None
@@ -167,6 +169,7 @@ class SeedUpdate(BaseModel):
 
 class SeedBatchCreate(BaseModel):
     """Schema for creating a new seed batch"""
+
     seed_id: str
     batch_number: Optional[str] = None
     germination_start_date: date
@@ -175,6 +178,7 @@ class SeedBatchCreate(BaseModel):
 
 class SeedBatchUpdate(BaseModel):
     """Schema for updating a seed batch"""
+
     current_stage: Optional[GrowthStage] = None
     actual_germination_date: Optional[date] = None
     actual_harvest_date: Optional[date] = None
@@ -184,6 +188,7 @@ class SeedBatchUpdate(BaseModel):
 
 class GrowthLogCreate(BaseModel):
     """Schema for adding a growth log entry"""
+
     observation: Optional[str] = None
     height_cm: Optional[float] = None
     leaf_count: Optional[int] = None

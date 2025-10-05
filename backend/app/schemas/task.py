@@ -42,6 +42,7 @@ class TaskPriority(str, Enum):
 
 class TaskScope(str, Enum):
     """Defines what the task applies to"""
+
     SEED = "seed"  # Task for a specific seed batch
     GARDEN = "garden"  # Task for the entire garden system
     POD = "pod"  # Task for a specific pod
@@ -49,6 +50,7 @@ class TaskScope(str, Enum):
 
 class Task(BaseModel):
     """Universal task model for both seed and garden tasks"""
+
     id: str
     task_type: TaskType
     scope: TaskScope
@@ -72,8 +74,7 @@ class Task(BaseModel):
     # Reminders
     reminder_sent: bool = False
     reminder_minutes_before: int = Field(
-        default=60,
-        description="Minutes before scheduled_date to send reminder"
+        default=60, description="Minutes before scheduled_date to send reminder"
     )
 
     # Recurrence
@@ -97,7 +98,7 @@ class Task(BaseModel):
                     "seed_batch_id": "batch_001",
                     "scheduled_date": "2025-12-05T09:00:00Z",
                     "priority": "high",
-                    "status": "pending"
+                    "status": "pending",
                 },
                 {
                     "id": "task_refill_001",
@@ -111,14 +112,15 @@ class Task(BaseModel):
                     "is_recurring": True,
                     "recurrence_pattern": "weekly",
                     "recurrence_interval": 7,
-                    "status": "pending"
-                }
+                    "status": "pending",
+                },
             ]
         }
 
 
 class Reminder(BaseModel):
     """Reminder for tasks or harvest dates"""
+
     id: str
     task_id: Optional[str] = None  # Reference to Task
     seed_batch_id: Optional[str] = None  # For harvest reminders
@@ -140,7 +142,7 @@ class Reminder(BaseModel):
                     "reminder_type": "task",
                     "message": "Cherry tomatoes ready for harvest in 1 hour",
                     "scheduled_time": "2025-12-05T08:00:00Z",
-                    "sent": False
+                    "sent": False,
                 },
                 {
                     "id": "reminder_002",
@@ -148,16 +150,18 @@ class Reminder(BaseModel):
                     "reminder_type": "harvest",
                     "message": "Cherry tomatoes estimated harvest in 3 days",
                     "scheduled_time": "2025-12-02T09:00:00Z",
-                    "sent": False
-                }
+                    "sent": False,
+                },
             ]
         }
 
 
 # Request/Response schemas for API endpoints
 
+
 class TaskCreate(BaseModel):
     """Schema for creating a new task"""
+
     task_type: TaskType
     scope: TaskScope
     title: str
@@ -177,6 +181,7 @@ class TaskCreate(BaseModel):
 
 class TaskUpdate(BaseModel):
     """Schema for updating a task"""
+
     title: Optional[str] = None
     description: Optional[str] = None
     scheduled_date: Optional[datetime] = None
@@ -192,6 +197,7 @@ class TaskUpdate(BaseModel):
 
 class ReminderCreate(BaseModel):
     """Schema for creating a reminder"""
+
     task_id: Optional[str] = None
     seed_batch_id: Optional[str] = None
     reminder_type: str

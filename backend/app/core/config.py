@@ -8,7 +8,7 @@ class Settings(BaseSettings):
     app_name: str = "Seedr"
     app_env: str = "development"
     api_v1_prefix: str = "/api/v1"
-    redis_url: str = "redis://localhost:6379/0"
+    sqlite_db_path: str = "seedr.db"
     scheduler_timezone: str = "UTC"
     reminder_lead_minutes: int = 60
 

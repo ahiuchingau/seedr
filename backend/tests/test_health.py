@@ -1,27 +1,32 @@
 import pytest
 from httpx import ASGITransport, AsyncClient
 
-from app.dependencies.redis import get_redis
+from app.dependencies.sqlite import get_db
 from app.main import app
 
 
-class DummyRedis:
-    async def ping(self) -> bool:  # pragma: no cover - trivial
-        return True
+class DummyCursor:
+    def close(self) -> None:  # pragma: no cover - trivial
+        return None
+
+
+class DummyConnection:
+    def execute(self, query: str) -> DummyCursor:  # pragma: no cover - trivial
+        return DummyCursor()
 
 
 @pytest.mark.asyncio
 async def test_health_endpoint():
-    async def override_get_redis():
-        return DummyRedis()
+    async def override_get_db():
+        return DummyConnection()
 
-    app.dependency_overrides[get_redis] = override_get_redis
+    app.dependency_overrides[get_db] = override_get_db
 
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as client:
         response = await client.get("/api/v1/health")
 
-    app.dependency_overrides.pop(get_redis, None)
+    app.dependency_overrides.pop(get_db, None)
 
     assert response.status_code == 200
     body = response.json()
