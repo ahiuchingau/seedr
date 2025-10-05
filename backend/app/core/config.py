@@ -5,7 +5,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
-    app_name: str = "Seedr Hydroponics Scheduler"
+    app_name: str = "Seedr"
     app_env: str = "development"
     api_v1_prefix: str = "/api/v1"
     redis_url: str = "redis://localhost:6379/0"
