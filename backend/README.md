@@ -1,0 +1,58 @@
+# Seedr Backend
+
+FastAPI service that manages hydroponic scheduling data using Redis as the primary datastore.
+
+## Prerequisites
+
+- Python 3.11+
+- Docker (for local Redis container)
+- [uv](https://docs.astral.sh/uv/) for dependency and virtualenv management
+
+## Setup
+
+```bash
+cd backend
+make setup
+make redis-up
+```
+
+`make setup` provisions a `.venv` via `uv` and installs runtime plus developer dependencies. `make redis-up` runs a Redis 7 container on port 6379 using the configuration in `redis/redis.conf` and stores data under `.redis-data/`.
+
+## Running the API
+
+```bash
+make run
+```
+
+The API will boot with a health endpoint at `GET /api/v1/health`.
+
+## Maintenance Commands
+
+- `make test` — run the pytest suite.
+- `make lint` — execute Ruff checks.
+- `make format` — apply Ruff formatting.
+- `make redis-down` — stop the Redis container.
+- `make redis-logs` — tail Redis logs.
+- `make teardown` — remove the virtual environment.
+- `make clean` — delete Python cache directories.
+
+## Configuration
+
+Environment variables can be placed in a `.env` file in the `backend` directory.
+
+| Variable | Default | Description |
+| -------- | ------- | ----------- |
+| `APP_ENV` | `development` | Identifies deployment environment |
+| `APP_NAME` | `Seedr Hydroponics Scheduler` | Display name for the service |
+| `API_V1_PREFIX` | `/api/v1` | Prefix for versioned API routes |
+| `REDIS_URL` | `redis://localhost:6379/0` | Redis connection string |
+| `SCHEDULER_TIMEZONE` | `UTC` | Default timezone for scheduled tasks |
+| `REMINDER_LEAD_MINUTES` | `60` | Default minutes before events to trigger reminders |
+
+The bundled Redis config enables append-only persistence and key-expiry notifications to support reminder workflows. Adjust it before using in production.
+
+## Next Steps
+
+- Flesh out domain models for seed batches, tasks, and events.
+- Implement background scheduling and reminder delivery services.
+- Introduce authentication once multi-user needs arise.
