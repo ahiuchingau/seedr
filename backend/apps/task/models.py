@@ -1,10 +1,10 @@
 from datetime import datetime
 from typing import Optional
-from enum import Enum
-from pydantic import BaseModel, Field
+from enum import StrEnum
+from ninja import Schema, Field
 
 
-class TaskType(str, Enum):
+class TaskType(StrEnum):
     # Seed-specific tasks
     HARVEST = "harvest"
     PRUNE = "prune"
@@ -25,7 +25,7 @@ class TaskType(str, Enum):
     OTHER = "other"
 
 
-class TaskStatus(str, Enum):
+class TaskStatus(StrEnum):
     PENDING = "pending"
     IN_PROGRESS = "in_progress"
     COMPLETED = "completed"
@@ -33,14 +33,14 @@ class TaskStatus(str, Enum):
     OVERDUE = "overdue"
 
 
-class TaskPriority(str, Enum):
+class TaskPriority(StrEnum):
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
     URGENT = "urgent"
 
 
-class TaskScope(str, Enum):
+class TaskScope(StrEnum):
     """Defines what the task applies to"""
 
     SEED = "seed"  # Task for a specific seed batch
@@ -48,7 +48,7 @@ class TaskScope(str, Enum):
     POD = "pod"  # Task for a specific pod
 
 
-class Task(BaseModel):
+class Task(Schema):
     """Universal task model for both seed and garden tasks"""
 
     id: str
@@ -118,7 +118,7 @@ class Task(BaseModel):
         }
 
 
-class Reminder(BaseModel):
+class Reminder(Schema):
     """Reminder for tasks or harvest dates"""
 
     id: str
@@ -159,7 +159,7 @@ class Reminder(BaseModel):
 # Request/Response schemas for API endpoints
 
 
-class TaskCreate(BaseModel):
+class TaskCreate(Schema):
     """Schema for creating a new task"""
 
     task_type: TaskType
@@ -179,7 +179,7 @@ class TaskCreate(BaseModel):
     notes: Optional[str] = None
 
 
-class TaskUpdate(BaseModel):
+class TaskUpdate(Schema):
     """Schema for updating a task"""
 
     title: Optional[str] = None
@@ -195,7 +195,7 @@ class TaskUpdate(BaseModel):
     notes: Optional[str] = None
 
 
-class ReminderCreate(BaseModel):
+class ReminderCreate(Schema):
     """Schema for creating a reminder"""
 
     task_id: Optional[str] = None

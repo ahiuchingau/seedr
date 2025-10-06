@@ -1,6 +1,6 @@
 # Seedr Backend
 
-FastAPI service that manages hydroponic scheduling data using SQLite as the primary datastore.
+Django Ninja service that manages hydroponic scheduling data using SQLite as the primary datastore.
 
 ## Prerequisites
 
@@ -14,11 +14,12 @@ cd backend
 make setup
 ```
 
-`make setup` provisions a `.venv` via `uv` and installs runtime plus developer dependencies. The application will create the SQLite database file on first use.
+`make setup` provisions a `.venv` via `uv` and installs runtime plus developer dependencies. Run `make migrate` after setup to apply Django migrations. The application will create the SQLite database file on first use.
 
 ## Running the API
 
 ```bash
+make migrate
 make run
 ```
 
@@ -29,6 +30,7 @@ The API will boot with a health endpoint at `GET /api/v1/health`.
 - `make test` — run the pytest suite.
 - `make lint` — execute Ruff checks.
 - `make format` — apply Ruff formatting.
+- `make migrate` — run Django database migrations.
 - `make teardown` — remove the virtual environment.
 - `make clean` — delete Python cache directories.
 

@@ -1,6 +1,6 @@
 UV := uv
 VENV := .venv
-.PHONY: setup install run test lint format teardown clean
+.PHONY: setup install run test lint format migrate teardown clean
 
 setup: install ## Create virtualenv and install dependencies
 
@@ -9,7 +9,7 @@ install: clean teardown
 	$(UV) pip install -e .[dev]
 
 run:
-	$(UV) run uvicorn app.main:app --reload
+	$(UV) run uvicorn seedr.asgi:application --reload
 
 test:
 	$(UV) run pytest
@@ -19,6 +19,9 @@ lint:
 
 format:
 	$(UV) run ruff format .
+
+migrate:
+	$(UV) run python manage.py migrate
 
 teardown:
 	rm -rf $(VENV)

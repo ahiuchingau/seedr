@@ -1,10 +1,10 @@
 from datetime import datetime
 from typing import Optional
-from enum import Enum
-from pydantic import BaseModel, Field
+from enum import StrEnum
+from ninja import Schema, Field
 
 
-class PodStatus(str, Enum):
+class PodStatus(StrEnum):
     EMPTY = "empty"
     PLANTED = "planted"
     GROWING = "growing"
@@ -12,8 +12,8 @@ class PodStatus(str, Enum):
     MAINTENANCE = "maintenance"
 
 
-class Garden(BaseModel):
-    """Garden/hydroponic system configuration"""
+class Garden(Schema):
+    """Hydroponic garden system configuration"""
 
     id: str
     name: str
@@ -43,7 +43,7 @@ class Garden(BaseModel):
         }
 
 
-class Pod(BaseModel):
+class Pod(Schema):
     """Individual growing pod in a garden"""
 
     id: str
@@ -75,7 +75,7 @@ class Pod(BaseModel):
         }
 
 
-class GardenEnvironmentLog(BaseModel):
+class GardenEnvironmentLog(Schema):
     """Environmental measurements for the entire garden system"""
 
     id: str
@@ -114,7 +114,7 @@ class GardenEnvironmentLog(BaseModel):
 # Request/Response schemas for API endpoints
 
 
-class GardenCreate(BaseModel):
+class GardenCreate(Schema):
     """Schema for creating a new garden"""
 
     name: str
@@ -125,7 +125,7 @@ class GardenCreate(BaseModel):
     notes: Optional[str] = None
 
 
-class GardenUpdate(BaseModel):
+class GardenUpdate(Schema):
     """Schema for updating a garden"""
 
     name: Optional[str] = None
@@ -136,7 +136,7 @@ class GardenUpdate(BaseModel):
     notes: Optional[str] = None
 
 
-class PodCreate(BaseModel):
+class PodCreate(Schema):
     """Schema for creating a new pod"""
 
     garden_id: str
@@ -144,7 +144,7 @@ class PodCreate(BaseModel):
     notes: Optional[str] = None
 
 
-class PodUpdate(BaseModel):
+class PodUpdate(Schema):
     """Schema for updating a pod"""
 
     status: Optional[PodStatus] = None
@@ -153,7 +153,7 @@ class PodUpdate(BaseModel):
     notes: Optional[str] = None
 
 
-class GardenEnvironmentLogCreate(BaseModel):
+class GardenEnvironmentLogCreate(Schema):
     """Schema for creating an environment log entry"""
 
     ph_level: Optional[float] = None

@@ -1,32 +1,19 @@
+import os
+import django
 import pytest
 from httpx import ASGITransport, AsyncClient
 
-from app.dependencies.sqlite import get_db
-from app.main import app
+from seedr.asgi import application
 
-
-class DummyCursor:
-    def close(self) -> None:  # pragma: no cover - trivial
-        return None
-
-
-class DummyConnection:
-    def execute(self, query: str) -> DummyCursor:  # pragma: no cover - trivial
-        return DummyCursor()
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "seedr.settings")
+django.setup()
 
 
 @pytest.mark.asyncio
 async def test_health_endpoint():
-    async def override_get_db():
-        return DummyConnection()
-
-    app.dependency_overrides[get_db] = override_get_db
-
-    transport = ASGITransport(app=app)
+    transport = ASGITransport(app=application)
     async with AsyncClient(transport=transport, base_url="http://test") as client:
         response = await client.get("/api/v1/health")
-
-    app.dependency_overrides.pop(get_db, None)
 
     assert response.status_code == 200
     body = response.json()
@@ -36,12 +23,12 @@ async def test_health_endpoint():
 
 @pytest.mark.asyncio
 async def test_root_endpoint():
-    transport = ASGITransport(app=app)
+    transport = ASGITransport(app=application)
     async with AsyncClient(transport=transport, base_url="http://test") as client:
         response = await client.get("/")
 
     assert response.status_code == 200
     payload = response.json()
     assert payload["message"] == "Seedr backend is running"
-    assert payload["docs_url"] == "/docs"
-    assert payload["health_url"].endswith("/health")
+    assert payload["docs_url"] == "/api/v1/docs"
+    assert payload["health_url"] == "/api/v1/health"

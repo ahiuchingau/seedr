@@ -4,7 +4,7 @@ Hydroponic scheduling platform under active development.
 
 ## Components
 
-- `backend/`: FastAPI service backed by Redis (seed tracking, task scheduling, reminders).
+- `backend/`: Django service + Sqlite
 
 ## Getting Started
 

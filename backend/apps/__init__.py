@@ -1,5 +1,5 @@
 # Seed schemas
-from .seed import (
+from .seed.models import (
     SeedType,
     GrowthStage,
     Seed,
@@ -13,7 +13,7 @@ from .seed import (
 )
 
 # Garden schemas
-from .garden import (
+from .garden.models import (
     PodStatus,
     Garden,
     Pod,
@@ -26,7 +26,7 @@ from .garden import (
 )
 
 # Task schemas
-from .task import (
+from .task.models import (
     TaskType,
     TaskStatus,
     TaskPriority,

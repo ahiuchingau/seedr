@@ -1,10 +1,10 @@
 from datetime import datetime, date
 from typing import Optional
-from enum import Enum
-from pydantic import BaseModel, Field
+from enum import StrEnum
+from ninja import Schema, Field
 
 
-class SeedType(str, Enum):
+class SeedType(StrEnum):
     VEGETABLE = "vegetable"
     FRUIT = "fruit"
     HERB = "herb"
@@ -12,7 +12,7 @@ class SeedType(str, Enum):
     OTHER = "other"
 
 
-class GrowthStage(str, Enum):
+class GrowthStage(StrEnum):
     GERMINATION = "germination"
     SEEDLING = "seedling"
     VEGETATIVE = "vegetative"
@@ -22,7 +22,7 @@ class GrowthStage(str, Enum):
     HARVESTED = "harvested"
 
 
-class Seed(BaseModel):
+class Seed(Schema):
     """Seed information - the variety and its characteristics"""
 
     id: str
@@ -66,7 +66,7 @@ class Seed(BaseModel):
         }
 
 
-class SeedBatch(BaseModel):
+class SeedBatch(Schema):
     """A batch of seeds planted - links seed variety to actual planting"""
 
     id: str
@@ -100,7 +100,7 @@ class SeedBatch(BaseModel):
         }
 
 
-class GrowthLogEntry(BaseModel):
+class GrowthLogEntry(Schema):
     """Individual growth observation or measurement for a seed batch"""
 
     id: str
@@ -132,7 +132,7 @@ class GrowthLogEntry(BaseModel):
 # Request/Response schemas for API endpoints
 
 
-class SeedCreate(BaseModel):
+class SeedCreate(Schema):
     """Schema for creating a new seed variety"""
 
     name: str
@@ -150,7 +150,7 @@ class SeedCreate(BaseModel):
     notes: Optional[str] = None
 
 
-class SeedUpdate(BaseModel):
+class SeedUpdate(Schema):
     """Schema for updating a seed variety"""
 
     name: Optional[str] = None
@@ -167,7 +167,7 @@ class SeedUpdate(BaseModel):
     notes: Optional[str] = None
 
 
-class SeedBatchCreate(BaseModel):
+class SeedBatchCreate(Schema):
     """Schema for creating a new seed batch"""
 
     seed_id: str
@@ -176,7 +176,7 @@ class SeedBatchCreate(BaseModel):
     notes: Optional[str] = None
 
 
-class SeedBatchUpdate(BaseModel):
+class SeedBatchUpdate(Schema):
     """Schema for updating a seed batch"""
 
     current_stage: Optional[GrowthStage] = None
@@ -186,7 +186,7 @@ class SeedBatchUpdate(BaseModel):
     notes: Optional[str] = None
 
 
-class GrowthLogCreate(BaseModel):
+class GrowthLogCreate(Schema):
     """Schema for adding a growth log entry"""
 
     observation: Optional[str] = None
