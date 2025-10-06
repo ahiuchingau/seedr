@@ -67,6 +67,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "seedr.wsgi.application"
+ASGI_APPLICATION = "seedr.wsgi.application"
 
 
 # Database
