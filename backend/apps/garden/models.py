@@ -1,55 +1,43 @@
 from datetime import datetime
 from typing import Optional
-from enum import StrEnum
-from ninja import Schema, Field
+
+from django.db import models
 
 
-class PodStatus(StrEnum):
-    EMPTY = "empty"
-    PLANTED = "planted"
-    GROWING = "growing"
-    HARVESTING = "harvesting"
-    MAINTENANCE = "maintenance"
+class PodStatus(models.IntegerChoices):
+    EMPTY = 0
+    PLANTED = 1
+    GROWING = 2
+    HARVESTING = 3
+    MAINTENANCE = 4
 
 
-class Garden(Schema):
+class Garden(models.Model):
     """Hydroponic garden system configuration"""
 
-    id: str
-    name: str
-    description: Optional[str] = None
-    total_pods: int = Field(gt=0, description="Total number of growing pods in the garden")
+    name = models.CharField(max_length=100)
+    description = models.TextField(null=True, blank=True)
+    total_pods = models.PositiveIntegerField()
 
-    # System configuration
-    system_type: Optional[str] = None  # e.g., "NFT", "DWC", "Ebb & Flow"
-    location: Optional[str] = None
+    location = models.CharField(max_length=100, null=True, blank=True)
 
     # Metadata
-    created_at: datetime = Field(default_factory=lambda: datetime.now(datetime.UTC))
-    updated_at: datetime = Field(default_factory=lambda: datetime.now(datetime.UTC))
-    is_active: bool = True
-    notes: Optional[str] = None
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(default=True)
+    notes = models.TextField(null=True, blank=True)
 
-    class Config:
-        json_schema_extra = {
-            "example": {
-                "id": "garden_001",
-                "name": "Indoor Hydro System",
-                "description": "Main hydroponic garden in the kitchen",
-                "total_pods": 12,
-                "system_type": "NFT",
-                "location": "Kitchen",
-            }
-        }
+    def __str__(self):
+        return self.name
 
 
-class Pod(Schema):
+class GardenPod(models.Model):
     """Individual growing pod in a garden"""
 
-    id: str
-    garden_id: str
-    pod_number: int = Field(ge=1, description="Pod position number in the garden")
-    status: PodStatus = PodStatus.EMPTY
+    pod_number = models.PositiveIntegerField()
+    name = models.CharField(max_length=100, null=True, blank=True)
+    garden = models.ForeignKey(Garden, on_delete=models.CASCADE, related_name="pods")
+    status = models.IntegerField(choices=PodStatus, default=PodStatus.EMPTY)
 
     # Seed assignment
     seed_batch_id: Optional[str] = None  # Reference to SeedBatch if planted
@@ -58,109 +46,33 @@ class Pod(Schema):
     planted_date: Optional[datetime] = None
 
     # Metadata
-    created_at: datetime = Field(default_factory=lambda: datetime.now(datetime.UTC))
-    updated_at: datetime = Field(default_factory=lambda: datetime.now(datetime.UTC))
-    notes: Optional[str] = None
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    notes = models.TextField(null=True, blank=True)
 
-    class Config:
-        json_schema_extra = {
-            "example": {
-                "id": "pod_001",
-                "garden_id": "garden_001",
-                "pod_number": 1,
-                "status": "planted",
-                "seed_batch_id": "batch_001",
-                "planted_date": "2025-10-01T10:00:00Z",
-            }
-        }
+    def __str__(self):
+        return f"Pod {self.pod_number} in {self.garden.name}"
 
 
-class GardenEnvironmentLog(Schema):
+class GardenEnvironmentLog(models.Model):
     """Environmental measurements for the entire garden system"""
 
-    id: str
-    garden_id: str
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(datetime.UTC))
+    garden = models.ForeignKey(Garden, on_delete=models.CASCADE, related_name="environment_logs")
+    timestamp = models.DateTimeField(auto_now_add=True)
 
     # Water quality
-    ph_level: Optional[float] = None
-    ec_level: Optional[float] = None
-    water_temp_c: Optional[float] = None
-    dissolved_oxygen: Optional[float] = None
+    ph_level = models.FloatField(null=True, blank=True)
+    ec_level = models.FloatField(null=True, blank=True)
+    water_temp_c = models.FloatField(null=True, blank=True)
+    dissolved_oxygen = models.FloatField(null=True, blank=True)
 
     # Ambient conditions
-    air_temp_c: Optional[float] = None
-    humidity_percent: Optional[float] = None
-    light_intensity_lux: Optional[int] = None
+    air_temp_c = models.FloatField(null=True, blank=True)
+    humidity_percent = models.FloatField(null=True, blank=True)
+    light_intensity_lux = models.IntegerField(null=True, blank=True)
 
     # Notes
-    notes: Optional[str] = None
+    notes = models.TextField(null=True, blank=True)
 
-    class Config:
-        json_schema_extra = {
-            "example": {
-                "id": "env_log_001",
-                "garden_id": "garden_001",
-                "timestamp": "2025-10-05T14:30:00Z",
-                "ph_level": 6.2,
-                "ec_level": 1.8,
-                "water_temp_c": 22.5,
-                "air_temp_c": 24.0,
-                "humidity_percent": 65.0,
-            }
-        }
-
-
-# Request/Response schemas for API endpoints
-
-
-class GardenCreate(Schema):
-    """Schema for creating a new garden"""
-
-    name: str
-    description: Optional[str] = None
-    total_pods: int = Field(gt=0)
-    system_type: Optional[str] = None
-    location: Optional[str] = None
-    notes: Optional[str] = None
-
-
-class GardenUpdate(Schema):
-    """Schema for updating a garden"""
-
-    name: Optional[str] = None
-    description: Optional[str] = None
-    system_type: Optional[str] = None
-    location: Optional[str] = None
-    is_active: Optional[bool] = None
-    notes: Optional[str] = None
-
-
-class PodCreate(Schema):
-    """Schema for creating a new pod"""
-
-    garden_id: str
-    pod_number: int = Field(ge=1)
-    notes: Optional[str] = None
-
-
-class PodUpdate(Schema):
-    """Schema for updating a pod"""
-
-    status: Optional[PodStatus] = None
-    seed_batch_id: Optional[str] = None
-    planted_date: Optional[datetime] = None
-    notes: Optional[str] = None
-
-
-class GardenEnvironmentLogCreate(Schema):
-    """Schema for creating an environment log entry"""
-
-    ph_level: Optional[float] = None
-    ec_level: Optional[float] = None
-    water_temp_c: Optional[float] = None
-    dissolved_oxygen: Optional[float] = None
-    air_temp_c: Optional[float] = None
-    humidity_percent: Optional[float] = None
-    light_intensity_lux: Optional[int] = None
-    notes: Optional[str] = None
+    def __str__(self):
+        return f"Env Log for {self.garden.name} at {self.timestamp}"
